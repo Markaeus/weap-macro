@@ -8,13 +8,6 @@ const tokenOrActor = await fromUuid(lastArg.actorUuid);
 const targetActor = tokenOrActor.actor ? tokenOrActor.actor : tokenOrActor;
 
 
-async function deleteTemplates(actorId) {
-  let removeTemplates = canvas.templates.placeables.filter(
-    (i) => i.data.flags?.SpiritualWeaponRange?.ActorId === actorId
-  );
-  await canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate", removeTemplates.map((t) => t.id));
-}
-
 /**
  * Create Spiritual Weapon item in inventory
  */
@@ -41,26 +34,12 @@ if (args[0] === "on") {
     },
   ]);
 
-  const templateData = {
-    t: "rect",
-    user: game.user.id,
-    distance: 7,
-    direction: 45,
-    x: 0,
-    y: 0,
-    flags: {
-      SpiritualWeapon: {
-        ActorId: targetActor.id,
-      },
-    },
-    fillColor: game.user.color,
-    texture: DAEItem.img,
-  };
-  Hooks.once("createMeasuredTemplate", () => deleteTemplates(targetActor.id));
-  const doc = new CONFIG.MeasuredTemplate.documentClass(templateData, { parent: canvas.scene });
-  let template = new game.dnd5e.canvas.AbilityTemplate(doc);
-  template.actorSheet = targetActor.sheet;
-  template.drawPreview();
+  
+  //Hooks.once("createMeasuredTemplate", () => deleteTemplates(targetActor.id));
+  //const doc = new CONFIG.MeasuredTemplate.documentClass(templateData, { parent: canvas.scene });
+  //let template = new game.dnd5e.canvas.AbilityTemplate(doc);
+  //template.actorSheet = targetActor.sheet;
+  //template.drawPreview();
 
   const castItem = targetActor.data.items.find((i) => i.name === castItemName && i.type === "weapon");
   if (!castItem) {
@@ -96,6 +75,6 @@ if (args[0] === "on") {
 if (args[0] === "off") {
   let swords = targetActor.data.items.filter((i) => i.data.flags?.SpiritualWeapon === targetActor.id);
   if (swords.length > 0) await targetActor.deleteEmbeddedDocuments("Item", swords.map((s) => s.id));
-  const templates = canvas.templates.placeables.filter((i) => i.data.flags?.SpiritualWeapon?.ActorId === targetActor.id);
-  if (templates.length > 0) await canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate", templates.map((t) => t.id));
+  //const templates = canvas.templates.placeables.filter((i) => i.data.flags?.SpiritualWeapon?.ActorId === targetActor.id);
+  //if (templates.length > 0) await canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate", templates.map((t) => t.id));
 }
